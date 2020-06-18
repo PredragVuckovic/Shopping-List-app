@@ -1,19 +1,58 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, FlatList, Alert } from 'react-native';
+import ListItem from './components/ListItem';
+import Header from './components/Header';
+import AddItem from './components/AddItem';
+import uuid from 'uuid';
 
-export default function App() {
+
+const App = () => {
+  const [items, setItem] = useState([
+    { id: uuid(), text: 'Almond Milk' },
+    { id: uuid(), text: 'Flax seeds' },
+    { id: uuid(), text: 'Oats' },
+    { id: uuid(), text: 'Beans in can' },
+  ]);
+
+  const addItem = text => {
+    if (!text) {
+      Alert.alert('Error', 'Please enter text in field');
+    }
+    else {
+      setItem(prevItem => {
+        return [{ id: uuid(), text: text }, ...prevItem]
+      });
+    }
+
+
+
+  };
+
+  const deleteItem = (id) => {
+    setItem(prevItem => {
+      return prevItem.filter(item => item.id != id)
+    });
+  }
+
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+    <View style={style.container} >
+      <Header />
+      <AddItem AddItem={addItem} />
+      <FlatList data={items} renderItem={({ item }) => (
+        <ListItem item={item} deleteItem={deleteItem} />
+      )} />
     </View>
-  );
+  )
 }
 
-const styles = StyleSheet.create({
+
+const style = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+    paddingTop: 60,
+  }
+}
+)
+
+export default App;
